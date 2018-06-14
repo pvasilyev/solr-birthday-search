@@ -1,7 +1,10 @@
-package com.github.pvasilyev.solr.birthday;
+package com.github.pvasilyev.solr.birthday.impl;
 
 import java.lang.invoke.MethodHandles;
+import java.util.Calendar;
+import java.util.Date;
 
+import com.github.pvasilyev.solr.birthday.api.BirthdayQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,12 +24,13 @@ public class BirthdaySearchComponent {
     /**
      * Main API method which will be responsible for the whole logic of birthday-search.
      *
-     * @param birthdayQuery is the query represented as number. Example: search for all people who have birthday within
+     * @param query is the query represented as object. Example: search for all people who have birthday within
      *                      <code>birthdayQuery</code> days from now.
      */
-    public void doBirthdaySearch(int birthdayQuery) {
-        final int currentDay = 1;
-        final int currentYear = 2018;
+    public String doBirthdaySearch(BirthdayQuery query) {
+        final int birthdayQuery = query.getDaysToBirthday();
+        final int currentDay = getStartDay(query);
+        final int currentYear = getCurrentYear(query);
         
         final String currentDayAsString = String.valueOf(currentDay);
         final int endDay;
@@ -47,6 +51,8 @@ public class BirthdaySearchComponent {
         
         final String solrFunctionQuery = daysToBirthdayFunctionScore(currentDayAsString, endDay, fakeLeapDayWillBeInThResult);
         LOG.info("Produced following function-query {}", solrFunctionQuery);
+
+        return solrFunctionQuery;
     }
 
     private boolean fakeLeapDayWithinNonLeapYear(int currentDay, int currentYear, int birthdayQuery) {
@@ -109,4 +115,34 @@ public class BirthdaySearchComponent {
         return "add(1,mod(" + endDay + "," + mod + "))"; 
     }
 
+    public String createQuery(BirthdayQuery query) {
+        // todo implement me fully
+        final int startDay = getStartDay(query);
+        final String startDayAsString = String.valueOf(startDay);
+        final String endDayAsString = String.valueOf(getEndDay(query, startDay));
+        return DOB_FIELD + ":[" + startDayAsString + " TO " + endDayAsString + "]";
+    }
+
+    private int getEndDay(BirthdayQuery query, int startDay) {
+        // todo take into account the year overflow
+        return startDay + query.getDaysToBirthday();
+    }
+
+    private int getStartDay(BirthdayQuery query) {
+        final Date date = new Date();
+        final Calendar calendar = new Calendar.Builder()
+                .setInstant(date.getTime())
+                .build();
+        // todo take into account the query#getTimeZone here
+        return calendar.get(Calendar.DAY_OF_YEAR);
+    }
+
+    private int getCurrentYear(BirthdayQuery query) {
+        final Date date = new Date();
+        final Calendar calendar = new Calendar.Builder()
+                .setInstant(date.getTime())
+                .build();
+        // todo take into account the query#getTimeZone here
+        return calendar.get(Calendar.YEAR);
+    }
 }
