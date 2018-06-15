@@ -19,6 +19,7 @@ public class SearchProviderImpl implements SearchProvider {
 
     private SolrClient solrClient;
     private BirthdaySearchComponent birthdaySearchComponent;
+    private String collectionName = "test";
 
     @Override
     public List<SolrDocument> searchByBirthday(BirthdayQuery query) {
@@ -39,11 +40,19 @@ public class SearchProviderImpl implements SearchProvider {
         }
     }
 
-    public void setSolrClient(SolrClient solrClient) {
-        this.solrClient = solrClient;
+    public void setSolrClient(SearchEngineFactory searchEngineFactory) {
+        this.solrClient = searchEngineFactory.createSolrClient();
     }
 
     public void setBirthdaySearchComponent(BirthdaySearchComponent birthdaySearchComponent) {
         this.birthdaySearchComponent = birthdaySearchComponent;
+    }
+
+    public void setCollectionName(String collectionName) {
+        this.collectionName = collectionName;
+    }
+
+    public void close() throws IOException {
+        solrClient.close();
     }
 }

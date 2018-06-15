@@ -11,6 +11,8 @@
     <properties>
         <solr.version>6.6.4</solr.version>
         <slf4j.version>1.7.7</slf4j.version>
+
+        <junit.version>4.12</junit.version>
     </properties>
 
     <dependencies>
@@ -24,15 +26,22 @@
             <artifactId>slf4j-log4j12</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
-                <excludes>
-                    <exclude>**/*</exclude>
-                </excludes>
+                <includes>
+                    <include>**/*.xml</include>
+                </includes>
             </resource>
         </resources>
         <plugins>
