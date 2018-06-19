@@ -1,5 +1,7 @@
 package com.github.pvasilyev.solr.birthday.api;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.TimeZone;
 
 /**
@@ -7,33 +9,52 @@ import java.util.TimeZone;
  */
 public class BirthdayQuery {
 
+    public static final int LEAP_DAY_ORD = 31 + 29;
+
+    private final int currentYear;
+    private final int currentDayOfYear;
     private final int daysToBirthday;
-    private final TimeZone timeZone;
     private final int rows;
 
-    private BirthdayQuery(int daysToBirthday, TimeZone timeZone, int rows) {
+    private BirthdayQuery(int currentYear, int currentDayOfYear, int daysToBirthday, int rows) {
+        this.currentYear = currentYear;
+        this.currentDayOfYear = currentDayOfYear;
         this.daysToBirthday = daysToBirthday;
-        this.timeZone = timeZone;
         this.rows = rows;
+    }
+
+    public int getCurrentYear() {
+        return currentYear;
+    }
+
+    public int getCurrentDayOfYear() {
+        return currentDayOfYear;
     }
 
     public int getDaysToBirthday() {
         return daysToBirthday;
     }
 
-    public TimeZone getTimeZone() {
-        return timeZone;
-    }
-
     public int getRows() {
         return rows;
     }
 
+    public static boolean isLeapYear(int year) {
+        // according to wikipedia:
+        return year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
+    }
+
     public static class Builder {
 
+        private Date currentTime = new Date();
         private int daysToBirthday;
-        private TimeZone timeZone;
+        private TimeZone timeZone = TimeZone.getDefault();
         private int rows = 5;
+
+        public Builder withCurrentTime(Date currentTime) {
+            this.currentTime = currentTime;
+            return this;
+        }
 
         public Builder withDaysToBirthday(int daysToBirthday) {
             this.daysToBirthday = daysToBirthday;
@@ -51,7 +72,14 @@ public class BirthdayQuery {
         }
 
         public BirthdayQuery build() {
-            return new BirthdayQuery(daysToBirthday, timeZone, rows);
+            final Calendar instance = Calendar.getInstance(timeZone);
+            instance.setTime(currentTime);
+            final int currentYear = instance.get(Calendar.YEAR);
+            int currentDayOfYear = instance.get(Calendar.DAY_OF_YEAR);
+            if (!isLeapYear(currentYear) && currentDayOfYear >= LEAP_DAY_ORD) {
+                currentDayOfYear += 1;
+            }
+            return new BirthdayQuery(currentYear, currentDayOfYear, daysToBirthday, rows);
         }
 
     }

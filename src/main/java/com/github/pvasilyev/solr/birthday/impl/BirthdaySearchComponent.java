@@ -1,8 +1,6 @@
 package com.github.pvasilyev.solr.birthday.impl;
 
 import java.lang.invoke.MethodHandles;
-import java.util.Calendar;
-import java.util.Date;
 
 import com.github.pvasilyev.solr.birthday.api.BirthdayQuery;
 import org.slf4j.Logger;
@@ -16,7 +14,6 @@ public class BirthdaySearchComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private static final int LEAP_DAY_ORD = 31 + 29;
     private static final int DAYS_IN_YEAR = 366;
 
     private static final String DOB_FIELD = "client_date_of_birth.yday";
@@ -56,20 +53,15 @@ public class BirthdaySearchComponent {
     }
 
     private boolean fakeLeapDayWithinNonLeapYear(int currentDay, int currentYear, int birthdayQuery) {
-        return !isLeapYear(currentYear)
-                && currentDay <= LEAP_DAY_ORD
-                && currentDay + birthdayQuery >= LEAP_DAY_ORD;
-    }
-
-    private static boolean isLeapYear(int year) {
-        // according to wikipedia:
-        return year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
+        return !BirthdayQuery.isLeapYear(currentYear)
+                && currentDay <= BirthdayQuery.LEAP_DAY_ORD
+                && currentDay + birthdayQuery >= BirthdayQuery.LEAP_DAY_ORD;
     }
 
     private boolean fakeLeapDayAsResultOfOverlappingWithNextYear(int currentDay, int currentYear, int birthdayQuery) {
-        return !isLeapYear(currentYear + 1)
+        return !BirthdayQuery.isLeapYear(currentYear + 1)
                 && currentDay + birthdayQuery > DAYS_IN_YEAR
-                && (currentDay + birthdayQuery) % DAYS_IN_YEAR + 1 >= LEAP_DAY_ORD;
+                && (currentDay + birthdayQuery) % DAYS_IN_YEAR + 1 >= BirthdayQuery.LEAP_DAY_ORD;
     }
 
     private String daysToBirthdayFunctionScore(String currentDayAsString, int endDay, boolean fakeLeapDayWillBeInThResult) {
@@ -102,7 +94,7 @@ public class BirthdaySearchComponent {
                     fakeLeapDayWillBeInThResult + "," + // must be fake-leap-day within result
                     "and(" + // and day must be after #LEAP_DAY_ORD and before #endDay
                         "not(" + ifLessThan(dobField, mod(endDay, DAYS_IN_YEAR)) + ")," +
-                        ifLessThan(dobField, String.valueOf(LEAP_DAY_ORD)) +
+                        ifLessThan(dobField, String.valueOf(BirthdayQuery.LEAP_DAY_ORD)) +
                     ")" +
                 ")";        
     }
@@ -129,20 +121,10 @@ public class BirthdaySearchComponent {
     }
 
     private int getStartDay(BirthdayQuery query) {
-        final Date date = new Date();
-        final Calendar calendar = new Calendar.Builder()
-                .setInstant(date.getTime())
-                .build();
-        // todo take into account the query#getTimeZone here
-        return calendar.get(Calendar.DAY_OF_YEAR);
+        return query.getCurrentDayOfYear();
     }
 
     private int getCurrentYear(BirthdayQuery query) {
-        final Date date = new Date();
-        final Calendar calendar = new Calendar.Builder()
-                .setInstant(date.getTime())
-                .build();
-        // todo take into account the query#getTimeZone here
-        return calendar.get(Calendar.YEAR);
+        return query.getCurrentYear();
     }
 }

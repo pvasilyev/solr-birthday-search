@@ -4,6 +4,7 @@ import com.github.pvasilyev.solr.birthday.api.BirthdayQuery;
 import com.github.pvasilyev.solr.birthday.api.SearchProvider;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
@@ -31,7 +32,7 @@ public class SearchProviderImpl implements SearchProvider {
         solrParams.add(CommonParams.ROWS, String.valueOf(query.getRows()));
 
         try {
-            final QueryResponse queryResponse = solrClient.query(solrParams);
+            final QueryResponse queryResponse = solrClient.query(collectionName, solrParams, SolrRequest.METHOD.POST);
             final SolrDocumentList results = queryResponse.getResults();
 
             return new ArrayList<>(results);
@@ -42,6 +43,10 @@ public class SearchProviderImpl implements SearchProvider {
 
     public void setSolrClient(SearchEngineFactory searchEngineFactory) {
         this.solrClient = searchEngineFactory.createSolrClient();
+    }
+
+    public SolrClient getSolrClient() {
+        return solrClient;
     }
 
     public void setBirthdaySearchComponent(BirthdaySearchComponent birthdaySearchComponent) {
