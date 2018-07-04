@@ -1,9 +1,6 @@
 package com.github.pvasilyev.solr.birthday;
 
 import com.github.pvasilyev.solr.birthday.api.BirthdayQuery;
-import com.github.pvasilyev.solr.birthday.api.SearchProvider;
-import com.github.pvasilyev.solr.birthday.impl.BirthdaySearchComponent;
-import com.github.pvasilyev.solr.birthday.impl.SearchProviderImpl;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -17,7 +14,6 @@ import org.hamcrest.core.IsNull;
 import org.hamcrest.number.IsCloseTo;
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -27,36 +23,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-public class BirthdaySearchComponentTest {
+public class BasicBirthdaySearchComponentTest extends AbstractBirthdaySearchTest {
 
-    private static final String COLLECTION = "sample";
-    private SearchProvider provider;
-    private SearchProviderImpl internalProvider;
-
-    @Before
-    public void setUp() throws Exception {
-        internalProvider = new SearchProviderImpl();
-        final BirthdaySearchComponent birthdaySearchComponent = new BirthdaySearchComponent();
-        internalProvider.setBirthdaySearchComponent(birthdaySearchComponent);
-        internalProvider.setSolrClient(new TestSearchEngineFactory());
-        internalProvider.setCollectionName(COLLECTION);
-        this.provider = internalProvider;
-
-        fillInWithSomeData();
-    }
-
-    private void fillInWithSomeData() throws IOException, SolrServerException {
+    @Override
+    protected void fillInWithSomeData() throws IOException, SolrServerException {
         final SolrClient solrClient = internalProvider.getSolrClient();
         solrClient.add(COLLECTION, createDoc("4352", "Adam Peters", "40", "1984"));
         solrClient.add(COLLECTION, createDoc("5412", "Bob Dylan", "58", "1990"));
         solrClient.add(COLLECTION, createDoc("2983", "Charlie Shin", "73", "1973"));
         final UpdateResponse commit = solrClient.commit(COLLECTION);
         Assert.assertThat(commit, IsNull.notNullValue());
-    }
-
-    private SolrInputDocument createDoc(String id, String name, String yday, String year) {
-        return new SolrInputDocument("id", id, "client_name_s", name,
-                "client_date_of_birth.yday", yday, "client_date_of_birth.year", year);
     }
 
     @Test
@@ -114,16 +90,6 @@ public class BirthdaySearchComponentTest {
         Assert.assertThat(result.get(0).get("client_date_of_birth.yday"), IsEqual.equalTo(40)); // 40-th day is 9th Feb (31+9)
         Assert.assertThat(result.get(0).get("client_date_of_birth.year"), IsEqual.equalTo(1984));
         Assert.assertThat(Double.valueOf((Float)result.get(0).get("days_to_birthday")), IsCloseTo.closeTo(4.0D, 1E-6));
-    }
-
-    private Date fromStringDate(String dateAsString) throws ParseException {
-        return fromStringDate(dateAsString, TimeZone.getTimeZone("GMT"));
-    }
-
-    private Date fromStringDate(String dateAsString, TimeZone timeZone) throws ParseException {
-        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        dateFormat.setTimeZone(timeZone);
-        return dateFormat.parse(dateAsString);
     }
 
     @After
