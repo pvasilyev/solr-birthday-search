@@ -16,7 +16,7 @@ public class BirthdaySearchComponent {
 
     private static final int DAYS_IN_YEAR = 366;
 
-    private static final String DOB_FIELD = "client_date_of_birth.yday";
+    static final String DOB_FIELD = "client_date_of_birth.yday";
 
     /**
      * Main API method which will be responsible for the whole logic of birthday-search.

@@ -49,7 +49,7 @@ public class BirthdayQuery {
         private Date currentTime = new Date();
         private int daysToBirthday;
         private TimeZone timeZone = TimeZone.getDefault();
-        private int rows = 5;
+        private int rows = 10;
 
         public Builder withCurrentTime(Date currentTime) {
             this.currentTime = currentTime;
