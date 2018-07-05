@@ -134,7 +134,6 @@ public abstract class BaseBirthdaySearchFullTest extends AbstractBirthdaySearchT
     }
 
     @Test
-    @Ignore
     public void birthdaySearchAround1stJan() throws Exception {
         final BirthdayQuery birthdayQuery = new BirthdayQuery.Builder()
                 .withCurrentTime(fromStringDate(currentYear + "-12-30 15:00:00")) // Dec 30
@@ -144,7 +143,7 @@ public abstract class BaseBirthdaySearchFullTest extends AbstractBirthdaySearchT
                 .build();
         final List<SolrDocument> result = provider.searchByBirthday(birthdayQuery);
         Assert.assertThat(result, IsNull.notNullValue());
-        Assert.assertThat(result.size(), IsEqual.equalTo(2));
+        Assert.assertThat(result.size(), IsEqual.equalTo(4));
 
         Assert.assertThat(result.get(0), IsNull.notNullValue());
         Assert.assertThat(result.get(0).get("id"), IsEqual.equalTo("89794"));
@@ -165,13 +164,13 @@ public abstract class BaseBirthdaySearchFullTest extends AbstractBirthdaySearchT
         Assert.assertThat(result.get(2).get("client_name_s"), IsEqual.equalTo("Dippy Dawg"));
         Assert.assertThat(result.get(2).get("client_date_of_birth.yday"), IsEqual.equalTo(1));
         Assert.assertThat(result.get(2).get("client_date_of_birth.year"), IsEqual.equalTo(1947));
-        Assert.assertThat(Double.valueOf((Float)result.get(2).get("days_to_birthday")), IsCloseTo.closeTo(0.0D, 1E-6));
+        Assert.assertThat(Double.valueOf((Float)result.get(2).get("days_to_birthday")), IsCloseTo.closeTo(2.0D, 1E-6));
 
         Assert.assertThat(result.get(3), IsNull.notNullValue());
         Assert.assertThat(result.get(3).get("id"), IsEqual.equalTo("43405"));
         Assert.assertThat(result.get(3).get("client_name_s"), IsEqual.equalTo("Bruce Wayne"));
         Assert.assertThat(result.get(3).get("client_date_of_birth.yday"), IsEqual.equalTo(2));
         Assert.assertThat(result.get(3).get("client_date_of_birth.year"), IsEqual.equalTo(1953));
-        Assert.assertThat(Double.valueOf((Float)result.get(3).get("days_to_birthday")), IsCloseTo.closeTo(1.0D, 1E-6));
+        Assert.assertThat(Double.valueOf((Float)result.get(3).get("days_to_birthday")), IsCloseTo.closeTo(3.0D, 1E-6));
     }
 }

@@ -108,15 +108,20 @@ public class BirthdaySearchComponent {
     }
 
     public String createQuery(BirthdayQuery query) {
-        // todo implement me fully
         final int startDay = getStartDay(query);
         final String startDayAsString = String.valueOf(startDay);
-        final String endDayAsString = String.valueOf(getEndDay(query, startDay));
-        return DOB_FIELD + ":[" + startDayAsString + " TO " + endDayAsString + "]";
+        final int endDay = getEndDay(query, startDay);
+        if (endDay <= DAYS_IN_YEAR) {
+            final String endDayAsString = String.valueOf(endDay);
+            return DOB_FIELD + ":[" + startDayAsString + " TO " + endDayAsString + "]";
+        } else {
+            final String endDayAsString = String.valueOf(endDay % DAYS_IN_YEAR);
+            return DOB_FIELD + ":[" + startDayAsString + " TO " + DAYS_IN_YEAR + "] " +
+                    DOB_FIELD + ":[1 TO " + endDayAsString + "]";
+        }
     }
 
     private int getEndDay(BirthdayQuery query, int startDay) {
-        // todo take into account the year overflow
         return startDay + query.getDaysToBirthday();
     }
 
