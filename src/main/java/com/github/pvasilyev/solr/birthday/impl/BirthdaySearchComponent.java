@@ -33,6 +33,7 @@ public class BirthdaySearchComponent {
         final int endDay;
         final boolean fakeLeapDayWillBeInThResult;
         if (birthdayQuery >= 0) {
+            // todo: throw exception if the birthday query is more than number of days in the year.
             if (fakeLeapDayWithinNonLeapYear(currentDay, currentYear, birthdayQuery)
                     || fakeLeapDayAsResultOfOverlappingWithNextYear(currentDay, currentYear, birthdayQuery)) {
                 endDay = currentDay + birthdayQuery + 1;
@@ -42,6 +43,7 @@ public class BirthdaySearchComponent {
                 endDay = currentDay + birthdayQuery;
             }
         } else {
+            // todo: think - maybe it's better to throw exception
             fakeLeapDayWillBeInThResult = false;
             endDay = currentDay + birthdayQuery;
         }
