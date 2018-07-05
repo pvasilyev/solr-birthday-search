@@ -152,7 +152,7 @@ public class FullBirthdaySearchNowIsNonLeapYearTest extends BaseBirthdaySearchFu
 
         Assert.assertThat(result.get(2), IsNull.notNullValue());
         Assert.assertThat(result.get(2).get("id"), IsEqual.equalTo("43405"));
-        Assert.assertThat(result.get(2).get("client_name_s"), IsEqual.equalTo("Bruce Wayne"));
+        Assert.assertThat(result.get(2).get("client_name_s"), IsEqual.equalTo("Darkwing Duck"));
         Assert.assertThat(result.get(2).get("client_date_of_birth.yday"), IsEqual.equalTo(2));
         Assert.assertThat(result.get(2).get("client_date_of_birth.year"), IsEqual.equalTo(1953));
         Assert.assertThat(Double.valueOf((Float)result.get(2).get("days_to_birthday")), IsCloseTo.closeTo(2.0D, 1E-6));
@@ -206,7 +206,7 @@ public class FullBirthdaySearchNowIsNonLeapYearTest extends BaseBirthdaySearchFu
 
         Assert.assertThat(result.get(2), IsNull.notNullValue());
         Assert.assertThat(result.get(2).get("id"), IsEqual.equalTo("43405"));
-        Assert.assertThat(result.get(2).get("client_name_s"), IsEqual.equalTo("Bruce Wayne"));
+        Assert.assertThat(result.get(2).get("client_name_s"), IsEqual.equalTo("Darkwing Duck"));
         Assert.assertThat(result.get(2).get("client_date_of_birth.yday"), IsEqual.equalTo(2));
         Assert.assertThat(result.get(2).get("client_date_of_birth.year"), IsEqual.equalTo(1953));
         Assert.assertThat(Double.valueOf((Float)result.get(2).get("days_to_birthday")), IsCloseTo.closeTo(2.0D, 1E-6));
@@ -274,7 +274,7 @@ public class FullBirthdaySearchNowIsNonLeapYearTest extends BaseBirthdaySearchFu
 
         Assert.assertThat(result.get(2), IsNull.notNullValue());
         Assert.assertThat(result.get(2).get("id"), IsEqual.equalTo("43405"));
-        Assert.assertThat(result.get(2).get("client_name_s"), IsEqual.equalTo("Bruce Wayne"));
+        Assert.assertThat(result.get(2).get("client_name_s"), IsEqual.equalTo("Darkwing Duck"));
         Assert.assertThat(result.get(2).get("client_date_of_birth.yday"), IsEqual.equalTo(2));
         Assert.assertThat(result.get(2).get("client_date_of_birth.year"), IsEqual.equalTo(1953));
         Assert.assertThat(Double.valueOf((Float)result.get(2).get("days_to_birthday")), IsCloseTo.closeTo(2.0D, 1E-6));
@@ -335,7 +335,7 @@ public class FullBirthdaySearchNowIsNonLeapYearTest extends BaseBirthdaySearchFu
 
         Assert.assertThat(result.get(2), IsNull.notNullValue());
         Assert.assertThat(result.get(2).get("id"), IsEqual.equalTo("43405"));
-        Assert.assertThat(result.get(2).get("client_name_s"), IsEqual.equalTo("Bruce Wayne"));
+        Assert.assertThat(result.get(2).get("client_name_s"), IsEqual.equalTo("Darkwing Duck"));
         Assert.assertThat(result.get(2).get("client_date_of_birth.yday"), IsEqual.equalTo(2));
         Assert.assertThat(result.get(2).get("client_date_of_birth.year"), IsEqual.equalTo(1953));
         Assert.assertThat(Double.valueOf((Float)result.get(2).get("days_to_birthday")), IsCloseTo.closeTo(2.0D, 1E-6));

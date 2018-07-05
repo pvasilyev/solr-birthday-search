@@ -41,7 +41,7 @@ public abstract class BaseBirthdaySearchFullTest extends AbstractBirthdaySearchT
     }
 
     private void indexDoB2(SolrClient solrClient) throws IOException, SolrServerException {
-        solrClient.add(COLLECTION, createDoc("43405", "Bruce Wayne", "2", "1953"));
+        solrClient.add(COLLECTION, createDoc("43405", "Darkwing Duck", "2", "1953"));
     }
 
     private void indexDoB1(SolrClient solrClient) throws IOException, SolrServerException {
@@ -126,7 +126,7 @@ public abstract class BaseBirthdaySearchFullTest extends AbstractBirthdaySearchT
 
         Assert.assertThat(result.get(1), IsNull.notNullValue());
         Assert.assertThat(result.get(1).get("id"), IsEqual.equalTo("43405"));
-        Assert.assertThat(result.get(1).get("client_name_s"), IsEqual.equalTo("Bruce Wayne"));
+        Assert.assertThat(result.get(1).get("client_name_s"), IsEqual.equalTo("Darkwing Duck"));
         Assert.assertThat(result.get(1).get("client_date_of_birth.yday"), IsEqual.equalTo(2));
         Assert.assertThat(result.get(1).get("client_date_of_birth.year"), IsEqual.equalTo(1953));
         Assert.assertThat(Double.valueOf((Float)result.get(1).get("days_to_birthday")), IsCloseTo.closeTo(1.0D, 1E-6));
@@ -167,7 +167,7 @@ public abstract class BaseBirthdaySearchFullTest extends AbstractBirthdaySearchT
 
         Assert.assertThat(result.get(3), IsNull.notNullValue());
         Assert.assertThat(result.get(3).get("id"), IsEqual.equalTo("43405"));
-        Assert.assertThat(result.get(3).get("client_name_s"), IsEqual.equalTo("Bruce Wayne"));
+        Assert.assertThat(result.get(3).get("client_name_s"), IsEqual.equalTo("Darkwing Duck"));
         Assert.assertThat(result.get(3).get("client_date_of_birth.yday"), IsEqual.equalTo(2));
         Assert.assertThat(result.get(3).get("client_date_of_birth.year"), IsEqual.equalTo(1953));
         Assert.assertThat(Double.valueOf((Float)result.get(3).get("days_to_birthday")), IsCloseTo.closeTo(3.0D, 1E-6));

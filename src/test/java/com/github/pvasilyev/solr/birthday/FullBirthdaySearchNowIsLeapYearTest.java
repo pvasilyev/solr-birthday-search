@@ -89,4 +89,32 @@ public class FullBirthdaySearchNowIsLeapYearTest extends BaseBirthdaySearchFullT
         Assert.assertThat(result.get(0).get("client_date_of_birth.year"), IsEqual.equalTo(1966));
         Assert.assertThat(Double.valueOf((Float)result.get(0).get("days_to_birthday")), IsCloseTo.closeTo(0.0D, 1E-6));
     }
+
+    @Test
+    public void birthdaySearchStartingFrom29thFeb() throws Exception {
+        final BirthdayQuery birthdayQuery = new BirthdayQuery.Builder()
+                .withCurrentTime(fromStringDate("2016-02-29 15:00:00")) // Feb 29, current year is leap
+                .withDaysToBirthday(1)
+                .withTimeZone(TimeZone.getTimeZone("GMT"))
+                .build();
+        final List<SolrDocument> result = provider.searchByBirthday(birthdayQuery);
+        Assert.assertThat(result, IsNull.notNullValue());
+        Assert.assertThat(result.size(), IsEqual.equalTo(2));
+
+        Assert.assertThat(result.get(0), IsNull.notNullValue());
+        Assert.assertThat(result.get(0).get("id"), IsEqual.equalTo("77739"));
+        Assert.assertThat(result.get(0).get("client_name_s"), IsEqual.equalTo("Robin Hood"));
+        Assert.assertThat(result.get(0).get("client_date_of_birth.yday"), IsEqual.equalTo(60));
+        Assert.assertThat(result.get(0).get("client_date_of_birth.year"), IsEqual.equalTo(1952));
+        Assert.assertThat(Double.valueOf((Float)result.get(0).get("days_to_birthday")), IsCloseTo.closeTo(0.0D, 1E-6));
+
+        Assert.assertThat(result.get(1), IsNull.notNullValue());
+        Assert.assertThat(result.get(1).get("id"), IsEqual.equalTo("76642"));
+        Assert.assertThat(result.get(1).get("client_name_s"), IsEqual.equalTo("Winnie the Pooh"));
+        Assert.assertThat(result.get(1).get("client_date_of_birth.yday"), IsEqual.equalTo(61));
+        Assert.assertThat(result.get(1).get("client_date_of_birth.year"), IsEqual.equalTo(1938));
+        Assert.assertThat(Double.valueOf((Float)result.get(1).get("days_to_birthday")), IsCloseTo.closeTo(1.0D, 1E-6));
+    }
+
+
 }
