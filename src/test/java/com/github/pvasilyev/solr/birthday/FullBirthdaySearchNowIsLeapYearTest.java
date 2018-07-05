@@ -22,7 +22,7 @@ public class FullBirthdaySearchNowIsLeapYearTest extends BaseBirthdaySearchFullT
     @Test
     public void birthdaySearchBefore29thFeb() throws Exception {
         final BirthdayQuery birthdayQuery = new BirthdayQuery.Builder()
-                .withCurrentTime(fromStringDate(currentYear + "-02-27 15:00:00")) // Feb 27
+                .withCurrentTime(fromStringDate("2004-02-27 15:00:00")) // Feb 27
                 .withDaysToBirthday(1)
                 .withTimeZone(TimeZone.getTimeZone("GMT"))
                 .build();
@@ -48,7 +48,7 @@ public class FullBirthdaySearchNowIsLeapYearTest extends BaseBirthdaySearchFullT
     @Test
     public void birthdaySearchAfter29thFeb() throws Exception {
         final BirthdayQuery birthdayQuery = new BirthdayQuery.Builder()
-                .withCurrentTime(fromStringDate(currentYear + "-02-28 15:00:00")) // Feb 28, current year is leap
+                .withCurrentTime(fromStringDate("2008-02-28 15:00:00")) // Feb 28, current year is leap
                 .withDaysToBirthday(1)
                 .withTimeZone(TimeZone.getTimeZone("GMT"))
                 .build();
@@ -74,7 +74,7 @@ public class FullBirthdaySearchNowIsLeapYearTest extends BaseBirthdaySearchFullT
     @Test
     public void birthdaySearchRightOn29thFeb() throws Exception {
         final BirthdayQuery birthdayQuery = new BirthdayQuery.Builder()
-                .withCurrentTime(fromStringDate(currentYear + "-02-28 15:00:00")) // Feb 28, current year is leap
+                .withCurrentTime(fromStringDate("2012-02-28 15:00:00")) // Feb 28, current year is leap
                 .withDaysToBirthday(0)
                 .withTimeZone(TimeZone.getTimeZone("GMT"))
                 .build();

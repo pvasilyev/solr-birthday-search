@@ -16,7 +16,7 @@ import java.util.TimeZone;
 
 public abstract class BaseBirthdaySearchFullTest extends AbstractBirthdaySearchTest {
 
-    protected String currentYear;
+    String currentYear;
 
     @Override
     protected void fillInWithSomeData() throws Exception {

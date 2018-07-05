@@ -105,19 +105,31 @@ public class BirthdaySearchComponent {
         return "max(0,sub(" + leftArg + "," + rightArg + "))";
     }
 
-    private String mod(int endDay, int mod) {
-        return "add(1,mod(" + endDay + "," + mod + "))"; 
+    private String mod(int num, int mod) {
+        return "add(1,mod(" + num + "," + mod + "))";
     }
 
     public String createQuery(BirthdayQuery query) {
+        final int currentYear = getCurrentYear(query);
         final int startDay = getStartDay(query);
         final String startDayAsString = String.valueOf(startDay);
         final int endDay = getEndDay(query, startDay);
         if (endDay <= DAYS_IN_YEAR) {
-            final String endDayAsString = String.valueOf(endDay);
+            final String endDayAsString;
+            if (endDay < BirthdayQuery.LEAP_DAY_ORD || BirthdayQuery.isLeapYear(currentYear)) {
+                endDayAsString = String.valueOf(endDay);
+            } else {
+                endDayAsString = String.valueOf(endDay + 1);
+            }
             return DOB_FIELD + ":[" + startDayAsString + " TO " + endDayAsString + "]";
         } else {
-            final String endDayAsString = String.valueOf(endDay % DAYS_IN_YEAR);
+            final int overlappedEndDay = endDay - DAYS_IN_YEAR;
+            final String endDayAsString;
+            if (overlappedEndDay < BirthdayQuery.LEAP_DAY_ORD || BirthdayQuery.isLeapYear(currentYear + 1)) {
+                endDayAsString = String.valueOf(overlappedEndDay);
+            } else {
+                endDayAsString = String.valueOf(overlappedEndDay + 1);
+            }
             return DOB_FIELD + ":[" + startDayAsString + " TO " + DAYS_IN_YEAR + "] " +
                     DOB_FIELD + ":[1 TO " + endDayAsString + "]";
         }
