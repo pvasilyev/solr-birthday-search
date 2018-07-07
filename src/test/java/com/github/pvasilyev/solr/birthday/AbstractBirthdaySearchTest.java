@@ -22,6 +22,7 @@ public abstract class AbstractBirthdaySearchTest {
     public void setUp() throws Exception {
         internalProvider = new SearchProviderImpl();
         final BirthdaySearchComponent birthdaySearchComponent = new BirthdaySearchComponent();
+        birthdaySearchComponent.setDobField("client_date_of_birth.yday");
         internalProvider.setBirthdaySearchComponent(birthdaySearchComponent);
         internalProvider.setSolrClient(new TestSearchEngineFactory());
         internalProvider.setCollectionName(COLLECTION);

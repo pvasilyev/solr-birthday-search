@@ -16,6 +16,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Base implementation of the {@link SearchProvider}.
+ *
+ * <p>It is designed to be useful for integration with Spring. But it's up to end user how to configure this component.
+ *
+ */
 public class SearchProviderImpl implements SearchProvider {
 
     private SolrClient solrClient;
@@ -29,7 +35,7 @@ public class SearchProviderImpl implements SearchProvider {
         final String functionQuery = birthdaySearchComponent.doBirthdaySearch(query);
         solrParams.add(CommonParams.FL, "*,days_to_birthday:" + functionQuery);
         solrParams.add(CommonParams.SORT, functionQuery + " " +
-                SolrQuery.ORDER.asc + ", " + BirthdaySearchComponent.DOB_FIELD + " " + SolrQuery.ORDER.asc);
+                SolrQuery.ORDER.asc + ", " + birthdaySearchComponent.getDobField() + " " + SolrQuery.ORDER.asc);
         solrParams.add(CommonParams.ROWS, String.valueOf(query.getRows()));
 
         try {

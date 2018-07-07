@@ -39,11 +39,20 @@ public class BirthdayQuery {
         return rows;
     }
 
+    /**
+     * Implemented according to the wikipedia, see <a href="https://en.wikipedia.org/wiki/Leap_year">Leap year</a>.
+     *
+     * @param year is the year to check whether leap or not.
+     * @return true iff the <code>year</code> is leap, false otherwise.
+     */
     public static boolean isLeapYear(int year) {
-        // according to wikipedia:
         return year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
     }
 
+    /**
+     * Helper class which aims to construct the object of {@link BirthdayQuery}.
+     * Use it in order to chain your construction of the birthday query.
+     */
     public static class Builder {
 
         private Date currentTime = new Date();

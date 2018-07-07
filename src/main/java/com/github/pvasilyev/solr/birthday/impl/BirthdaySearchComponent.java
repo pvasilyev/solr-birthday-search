@@ -16,7 +16,7 @@ public class BirthdaySearchComponent {
 
     private static final int DAYS_IN_YEAR = 366;
 
-    static final String DOB_FIELD = "client_date_of_birth.yday";
+    private String dobField = "client_date_of_birth.yday";
 
     /**
      * Main API method which will be responsible for the whole logic of birthday-search.
@@ -72,7 +72,7 @@ public class BirthdaySearchComponent {
         return 
                 "mod(" +
                         "sub(" +
-                            applyShiftDependingOnLeapDayOrd(DOB_FIELD, DAYS_IN_YEAR, endDay, fakeLeapDayWillBeInThResult) +
+                            applyShiftDependingOnLeapDayOrd(dobField, DAYS_IN_YEAR, endDay, fakeLeapDayWillBeInThResult) +
                             "," +
                             currentDayAsString +
                         ")," +
@@ -123,7 +123,7 @@ public class BirthdaySearchComponent {
             } else {
                 endDayAsString = String.valueOf(endDay + 1);
             }
-            return DOB_FIELD + ":[" + startDayAsString + " TO " + endDayAsString + "]";
+            return dobField + ":[" + startDayAsString + " TO " + endDayAsString + "]";
         } else {
             final int overlappedEndDay = endDay - DAYS_IN_YEAR;
             final String endDayAsString;
@@ -132,8 +132,8 @@ public class BirthdaySearchComponent {
             } else {
                 endDayAsString = String.valueOf(overlappedEndDay + 1);
             }
-            return DOB_FIELD + ":[" + startDayAsString + " TO " + DAYS_IN_YEAR + "] " +
-                    DOB_FIELD + ":[1 TO " + endDayAsString + "]";
+            return dobField + ":[" + startDayAsString + " TO " + DAYS_IN_YEAR + "] " +
+                    dobField + ":[1 TO " + endDayAsString + "]";
         }
     }
 
@@ -148,5 +148,13 @@ public class BirthdaySearchComponent {
 
     private int getCurrentYear(BirthdayQuery query) {
         return query.getCurrentYear();
+    }
+
+    public String getDobField() {
+        return dobField;
+    }
+
+    public void setDobField(String dobField) {
+        this.dobField = dobField;
     }
 }
