@@ -28,7 +28,8 @@ public class SearchProviderImpl implements SearchProvider {
         solrParams.add(CommonParams.Q, birthdaySearchComponent.createQuery(query));
         final String functionQuery = birthdaySearchComponent.doBirthdaySearch(query);
         solrParams.add(CommonParams.FL, "*,days_to_birthday:" + functionQuery);
-        solrParams.add(CommonParams.SORT, functionQuery + " " + SolrQuery.ORDER.asc + ", " + BirthdaySearchComponent.DOB_FIELD + " " + SolrQuery.ORDER.asc);
+        solrParams.add(CommonParams.SORT, functionQuery + " " +
+                SolrQuery.ORDER.asc + ", " + BirthdaySearchComponent.DOB_FIELD + " " + SolrQuery.ORDER.asc);
         solrParams.add(CommonParams.ROWS, String.valueOf(query.getRows()));
 
         try {

@@ -33,7 +33,10 @@ public class BirthdaySearchComponent {
         final int endDay;
         final boolean fakeLeapDayWillBeInThResult;
         if (birthdayQuery >= 0) {
-            // todo: throw exception if the birthday query is more than number of days in the year.
+            if (birthdayQuery >= DAYS_IN_YEAR) {
+                throw new IllegalArgumentException("Can't handle more than days in the year, " +
+                        "current query has '" + birthdayQuery + "' days to birthday");
+            }
             if (fakeLeapDayWithinNonLeapYear(currentDay, currentYear, birthdayQuery)
                     || fakeLeapDayAsResultOfOverlappingWithNextYear(currentDay, currentYear, birthdayQuery)) {
                 endDay = currentDay + birthdayQuery + 1;
@@ -43,9 +46,8 @@ public class BirthdaySearchComponent {
                 endDay = currentDay + birthdayQuery;
             }
         } else {
-            // todo: think - maybe it's better to throw exception
-            fakeLeapDayWillBeInThResult = false;
-            endDay = currentDay + birthdayQuery;
+            throw new IllegalArgumentException("Can't do birthday search backwards, " +
+                    "current query has '" + birthdayQuery + "' days to birthday");
         }
         
         final String solrFunctionQuery = daysToBirthdayFunctionScore(currentDayAsString, endDay, fakeLeapDayWillBeInThResult);
@@ -136,7 +138,8 @@ public class BirthdaySearchComponent {
     }
 
     private int getEndDay(BirthdayQuery query, int startDay) {
-        return startDay + query.getDaysToBirthday();
+        final int daysToBirthday = query.getDaysToBirthday();
+        return startDay + daysToBirthday;
     }
 
     private int getStartDay(BirthdayQuery query) {
