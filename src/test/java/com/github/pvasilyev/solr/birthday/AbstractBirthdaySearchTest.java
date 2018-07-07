@@ -34,6 +34,7 @@ public abstract class AbstractBirthdaySearchTest {
     protected abstract void fillInWithSomeData() throws Exception;
 
     SolrInputDocument createDoc(String id, String name, String yday, String year) {
+        // todo this should be rather separate non-test component which will index document correctly.
         return new SolrInputDocument("id", id, "client_name_s", name,
                 "client_date_of_birth.yday", yday, "client_date_of_birth.year", year);
     }
