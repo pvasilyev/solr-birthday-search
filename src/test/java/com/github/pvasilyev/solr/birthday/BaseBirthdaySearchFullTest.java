@@ -1,8 +1,6 @@
 package com.github.pvasilyev.solr.birthday;
 
 import com.github.pvasilyev.solr.birthday.api.BirthdayQuery;
-import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrDocument;
 import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsNull;
@@ -10,7 +8,6 @@ import org.hamcrest.number.IsCloseTo;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -19,69 +16,68 @@ public abstract class BaseBirthdaySearchFullTest extends AbstractBirthdaySearchT
     String currentYear;
 
     @Override
-    protected void fillInWithSomeData() throws Exception {
-        final SolrClient solrClient = internalProvider.getSolrClient();
-        solrClient.deleteByQuery(COLLECTION, "*:*");
+    protected void fillInWithSomeData() {
+        indexer.deleteAll();
 
         // leap year use-cases:
-        indexDoB63(solrClient);
-        indexDoB62(solrClient);
-        indexDoB61(solrClient);
-        indexDoB60(solrClient);
-        indexDoB59(solrClient);
-        indexDoB58(solrClient);
+        indexDoB63();
+        indexDoB62();
+        indexDoB61();
+        indexDoB60();
+        indexDoB59();
+        indexDoB58();
 
         // Jan 1st use-cases:
-        indexDoB366(solrClient);
-        indexDoB365(solrClient);
-        indexDoB1(solrClient);
-        indexDoB2(solrClient);
+        indexDoB366();
+        indexDoB365();
+        indexDoB1();
+        indexDoB2();
 
-        solrClient.commit(COLLECTION);
+        indexer.commit();
     }
 
-    private void indexDoB2(SolrClient solrClient) throws IOException, SolrServerException {
-        solrClient.add(COLLECTION, createDoc("43405", "Darkwing Duck", "2", "1953"));
+    private void indexDoB2() {
+        indexer.index(createDoc("43405", "Darkwing Duck", "1953", "01", "2"));
     }
 
-    private void indexDoB1(SolrClient solrClient) throws IOException, SolrServerException {
-        solrClient.add(COLLECTION, createDoc("27523", "Dippy Dawg", "1", "1947"));
+    private void indexDoB1() {
+        indexer.index(createDoc("27523", "Dippy Dawg", "1947", "01", "1"));
     }
 
-    private void indexDoB365(SolrClient solrClient) throws IOException, SolrServerException {
-        solrClient.add(COLLECTION, createDoc("89794", "Steven Rogers", "365", "1967"));
+    private void indexDoB365() {
+        indexer.index(createDoc("89794", "Steven Rogers", "1967", "12", "30"));
     }
 
-    private void indexDoB366(SolrClient solrClient) throws IOException, SolrServerException {
-        solrClient.add(COLLECTION, createDoc("31516", "Donald Duck", "366", "1958"));
+    private void indexDoB366() {
+        indexer.index(createDoc("31516", "Donald Duck", "1958", "12", "31"));
     }
 
-    private void indexDoB58(SolrClient solrClient) throws IOException, SolrServerException {
-        solrClient.add(COLLECTION, createDoc("13847", "Peter Parker", "58", "1981"));
+    private void indexDoB58() {
+        indexer.index(createDoc("13847", "Peter Parker", "1981", "02", "27"));
     }
 
-    private void indexDoB59(SolrClient solrClient) throws IOException, SolrServerException {
-        solrClient.add(COLLECTION, createDoc("76440", "Bruce Wayne", "59", "1966"));
+    private void indexDoB59() {
+        indexer.index(createDoc("76440", "Bruce Wayne", "1966", "02", "28"));
     }
 
-    private void indexDoB60(SolrClient solrClient) throws IOException, SolrServerException {
-        solrClient.add(COLLECTION, createDoc("77739", "Robin Hood", "60", "1952"));
+    private void indexDoB60() {
+        indexer.index(createDoc("77739", "Robin Hood", "1952", "02", "29"));
     }
 
-    private void indexDoB61(SolrClient solrClient) throws IOException, SolrServerException {
-        solrClient.add(COLLECTION, createDoc("76642", "Winnie the Pooh", "61", "1938"));
+    private void indexDoB61() {
+        indexer.index(createDoc("76642", "Winnie the Pooh", "1938", "03", "01"));
     }
 
-    private void indexDoB62(SolrClient solrClient) throws IOException, SolrServerException {
-        solrClient.add(COLLECTION, createDoc("36025", "Kent Clark", "62", "1966"));
+    private void indexDoB62() {
+        indexer.index(createDoc("36025", "Kent Clark", "1966", "03", "02"));
     }
 
-    private void indexDoB63(SolrClient solrClient) throws IOException, SolrServerException {
-        solrClient.add(COLLECTION, createDoc("77075", "Mickey Mouse", "63", "1965"));
+    private void indexDoB63() {
+        indexer.index(createDoc("77075", "Mickey Mouse", "1965", "03", "03"));
     }
 
     @Test
-    public void birthdaySearchBefore1stJan() throws Exception {
+    public void birthdaySearchBefore1stJan() {
         final BirthdayQuery birthdayQuery = new BirthdayQuery.Builder()
                 .withCurrentTime(fromStringDate(currentYear + "-12-30 15:00:00")) // Dec 30
                 .withDaysToBirthday(1)
@@ -107,7 +103,7 @@ public abstract class BaseBirthdaySearchFullTest extends AbstractBirthdaySearchT
     }
 
     @Test
-    public void birthdaySearchAfter1stJan() throws Exception {
+    public void birthdaySearchAfter1stJan() {
         final BirthdayQuery birthdayQuery = new BirthdayQuery.Builder()
                 .withCurrentTime(fromStringDate(currentYear + "-01-01 15:00:00")) // Jan 1
                 .withDaysToBirthday(1)
@@ -133,7 +129,7 @@ public abstract class BaseBirthdaySearchFullTest extends AbstractBirthdaySearchT
     }
 
     @Test
-    public void birthdaySearchAround1stJan() throws Exception {
+    public void birthdaySearchAround1stJan() {
         final BirthdayQuery birthdayQuery = new BirthdayQuery.Builder()
                 .withCurrentTime(fromStringDate(currentYear + "-12-30 15:00:00")) // Dec 30
                 .withDaysToBirthday(3)

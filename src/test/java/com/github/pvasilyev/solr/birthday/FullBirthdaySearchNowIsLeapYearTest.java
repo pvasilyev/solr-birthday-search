@@ -20,7 +20,7 @@ public class FullBirthdaySearchNowIsLeapYearTest extends BaseBirthdaySearchFullT
     }
 
     @Test
-    public void birthdaySearchBefore29thFeb() throws Exception {
+    public void birthdaySearchBefore29thFeb() {
         final BirthdayQuery birthdayQuery = new BirthdayQuery.Builder()
                 .withCurrentTime(fromStringDate("2004-02-27 15:00:00")) // Feb 27
                 .withDaysToBirthday(1)
@@ -46,7 +46,7 @@ public class FullBirthdaySearchNowIsLeapYearTest extends BaseBirthdaySearchFullT
     }
 
     @Test
-    public void birthdaySearchAfter29thFeb() throws Exception {
+    public void birthdaySearchAfter29thFeb() {
         final BirthdayQuery birthdayQuery = new BirthdayQuery.Builder()
                 .withCurrentTime(fromStringDate("2008-02-28 15:00:00")) // Feb 28, current year is leap
                 .withDaysToBirthday(1)
@@ -72,7 +72,7 @@ public class FullBirthdaySearchNowIsLeapYearTest extends BaseBirthdaySearchFullT
     }
 
     @Test
-    public void birthdaySearchRightOn29thFeb() throws Exception {
+    public void birthdaySearchRightOn29thFeb() {
         final BirthdayQuery birthdayQuery = new BirthdayQuery.Builder()
                 .withCurrentTime(fromStringDate("2012-02-28 15:00:00")) // Feb 28, current year is leap
                 .withDaysToBirthday(0)
@@ -91,7 +91,7 @@ public class FullBirthdaySearchNowIsLeapYearTest extends BaseBirthdaySearchFullT
     }
 
     @Test
-    public void birthdaySearchStartingFrom29thFeb() throws Exception {
+    public void birthdaySearchStartingFrom29thFeb() {
         final BirthdayQuery birthdayQuery = new BirthdayQuery.Builder()
                 .withCurrentTime(fromStringDate("2016-02-29 15:00:00")) // Feb 29, current year is leap
                 .withDaysToBirthday(1)
@@ -117,7 +117,7 @@ public class FullBirthdaySearchNowIsLeapYearTest extends BaseBirthdaySearchFullT
     }
 
     @Test
-    public void birthdaySearchAround29thFeb() throws Exception {
+    public void birthdaySearchAround29thFeb() {
         final BirthdayQuery birthdayQuery = new BirthdayQuery.Builder()
                 .withCurrentTime(fromStringDate("2000-02-26 15:00:00")) // Feb 26, current year is leap
                 .withDaysToBirthday(10)
@@ -171,7 +171,7 @@ public class FullBirthdaySearchNowIsLeapYearTest extends BaseBirthdaySearchFullT
     }
 
     @Test
-    public void daysToBirthdayCalculationWithLeapDayExactlyNextYearIsNonLeap() throws Exception {
+    public void daysToBirthdayCalculationWithLeapDayExactlyNextYearIsNonLeap() {
         final BirthdayQuery birthdayQuery = new BirthdayQuery.Builder()
                 .withCurrentTime(fromStringDate( "2012-12-31 15:00:00")) // Dev 31, current year is leap, but next is non leap
                 .withDaysToBirthday(60)
@@ -232,7 +232,7 @@ public class FullBirthdaySearchNowIsLeapYearTest extends BaseBirthdaySearchFullT
     }
 
     @Test
-    public void daysToBirthdayCalculationWithLeapDayOverlappingNextYearIsNonLeap() throws Exception {
+    public void daysToBirthdayCalculationWithLeapDayOverlappingNextYearIsNonLeap() {
         final BirthdayQuery birthdayQuery = new BirthdayQuery.Builder()
                 .withCurrentTime(fromStringDate( "2016-12-31 15:00:00")) // Dev 31, current year is leap, but next is non leap
                 .withDaysToBirthday(62)

@@ -17,9 +17,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -27,10 +24,10 @@ public class BasicBirthdaySearchComponentTest extends AbstractBirthdaySearchTest
 
     @Override
     protected void fillInWithSomeData() throws IOException, SolrServerException {
-        final SolrClient solrClient = internalProvider.getSolrClient();
-        solrClient.add(COLLECTION, createDoc("4352", "Adam Peters", "40", "1984"));
-        solrClient.add(COLLECTION, createDoc("5412", "Bob Dylan", "58", "1990"));
-        solrClient.add(COLLECTION, createDoc("2983", "Charlie Shin", "73", "1973"));
+        final SolrClient solrClient = searchEngineFactory.getSolrClientInstance();
+        indexer.index(createDoc("4352", "Adam Peters", "1984", "02", "09"));
+        indexer.index(createDoc("5412", "Bob Dylan", "1990", "02", "27"));
+        indexer.index(createDoc("2983", "Charlie Shin", "1973", "03", "13"));
         final UpdateResponse commit = solrClient.commit(COLLECTION);
         Assert.assertThat(commit, IsNull.notNullValue());
     }
@@ -38,7 +35,8 @@ public class BasicBirthdaySearchComponentTest extends AbstractBirthdaySearchTest
     @Test
     public void embeddedSolrWorks() throws Exception {
         final TestSearchEngineFactory testSearchEngineFactory = new TestSearchEngineFactory();
-        final SolrClient solrClient = testSearchEngineFactory.createSolrClient();
+        testSearchEngineFactory.postConstruct();
+        final SolrClient solrClient = testSearchEngineFactory.getSolrClientInstance();
 
         solrClient.add(COLLECTION, new SolrInputDocument("id", "123", "client_first_name_s", "John"));
         solrClient.add(COLLECTION, new SolrInputDocument("id", "987", "client_first_name_s", "Peter"));
@@ -55,7 +53,7 @@ public class BasicBirthdaySearchComponentTest extends AbstractBirthdaySearchTest
     }
 
     @Test
-    public void simpleBirthdaySearchFrom10thMar() throws Exception {
+    public void simpleBirthdaySearchFrom10thMar() {
         final BirthdayQuery birthdayQuery = new BirthdayQuery.Builder()
                 .withCurrentTime(fromStringDate("2018-03-10 15:00:00"))
                 .withDaysToBirthday(10)
@@ -69,12 +67,11 @@ public class BasicBirthdaySearchComponentTest extends AbstractBirthdaySearchTest
         Assert.assertThat(result.get(0).get("id"), IsEqual.equalTo("2983"));
         Assert.assertThat(result.get(0).get("client_name_s"), IsEqual.equalTo("Charlie Shin"));
         Assert.assertThat(result.get(0).get("client_date_of_birth.yday"), IsEqual.equalTo(73)); // 73-th day is 13th Mar (31+29+13)
-        Assert.assertThat(result.get(0).get("client_date_of_birth.year"), IsEqual.equalTo(1973));
         Assert.assertThat(Double.valueOf((Float)result.get(0).get("days_to_birthday")), IsCloseTo.closeTo(3.0D, 1E-6));
     }
 
     @Test
-    public void simpleBirthdaySearchFrom5thFeb() throws Exception {
+    public void simpleBirthdaySearchFrom5thFeb() {
         final BirthdayQuery birthdayQuery = new BirthdayQuery.Builder()
                 .withCurrentTime(fromStringDate("2018-02-05 15:00:00"))
                 .withDaysToBirthday(10)
@@ -88,12 +85,11 @@ public class BasicBirthdaySearchComponentTest extends AbstractBirthdaySearchTest
         Assert.assertThat(result.get(0).get("id"), IsEqual.equalTo("4352"));
         Assert.assertThat(result.get(0).get("client_name_s"), IsEqual.equalTo("Adam Peters"));
         Assert.assertThat(result.get(0).get("client_date_of_birth.yday"), IsEqual.equalTo(40)); // 40-th day is 9th Feb (31+9)
-        Assert.assertThat(result.get(0).get("client_date_of_birth.year"), IsEqual.equalTo(1984));
         Assert.assertThat(Double.valueOf((Float)result.get(0).get("days_to_birthday")), IsCloseTo.closeTo(4.0D, 1E-6));
     }
 
     @After
-    public void tearDown() throws Exception {
-        internalProvider.close();
+    public void tearDown() {
+        searchEngineFactory.preDestroy();
     }
 }

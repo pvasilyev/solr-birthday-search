@@ -1,8 +1,13 @@
 package com.github.pvasilyev.solr.birthday.impl;
 
 import java.lang.invoke.MethodHandles;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 import com.github.pvasilyev.solr.birthday.api.BirthdayQuery;
+import org.apache.solr.common.SolrInputDocument;
+import org.apache.solr.common.SolrInputField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +21,8 @@ public class BirthdaySearchComponent {
 
     private static final int DAYS_IN_YEAR = 366;
 
-    private String dobField = "client_date_of_birth.yday";
+    private String dobField = "client_date_of_birth";
+    private TimeZone timeZone;
 
     /**
      * Main API method which will be responsible for the whole logic of birthday-search.
@@ -72,7 +78,7 @@ public class BirthdaySearchComponent {
         return 
                 "mod(" +
                         "sub(" +
-                            applyShiftDependingOnLeapDayOrd(dobField, DAYS_IN_YEAR, endDay, fakeLeapDayWillBeInThResult) +
+                            applyShiftDependingOnLeapDayOrd(getDobQueryField(), DAYS_IN_YEAR, endDay, fakeLeapDayWillBeInThResult) +
                             "," +
                             currentDayAsString +
                         ")," +
@@ -123,7 +129,7 @@ public class BirthdaySearchComponent {
             } else {
                 endDayAsString = String.valueOf(endDay + 1);
             }
-            return dobField + ":[" + startDayAsString + " TO " + endDayAsString + "]";
+            return getDobQueryField() + ":[" + startDayAsString + " TO " + endDayAsString + "]";
         } else {
             final int overlappedEndDay = endDay - DAYS_IN_YEAR;
             final String endDayAsString;
@@ -132,8 +138,8 @@ public class BirthdaySearchComponent {
             } else {
                 endDayAsString = String.valueOf(overlappedEndDay + 1);
             }
-            return dobField + ":[" + startDayAsString + " TO " + DAYS_IN_YEAR + "] " +
-                    dobField + ":[1 TO " + endDayAsString + "]";
+            return getDobQueryField() + ":[" + startDayAsString + " TO " + DAYS_IN_YEAR + "] " +
+                    getDobQueryField() + ":[1 TO " + endDayAsString + "]";
         }
     }
 
@@ -150,11 +156,37 @@ public class BirthdaySearchComponent {
         return query.getCurrentYear();
     }
 
-    public String getDobField() {
-        return dobField;
+    public String getDobQueryField() {
+        return dobField + ".yday";
     }
 
     public void setDobField(String dobField) {
         this.dobField = dobField;
+    }
+
+    public void setTimeZone(TimeZone timeZone) {
+        this.timeZone = timeZone;
+    }
+
+    public SolrInputDocument createSyntheticDobFields(SolrInputDocument document) {
+        final SolrInputField dobDocumentField = document.get(dobField);
+        if (dobDocumentField == null) {
+            throw new IllegalStateException("Can't index document w/o " + dobField + " - birthday search wouldn't have any sense");
+        }
+        if (dobDocumentField.getValue() == null || !(dobDocumentField.getValue() instanceof Date)) {
+            throw new IllegalArgumentException("Can't index document: " + dobField + " is either missing or it is not type of Date");
+        }
+        final Date dobValue = (Date) dobDocumentField.getValue();
+        final Calendar instance = Calendar.getInstance(timeZone);
+        instance.setTime(dobValue);
+        final int currentYear = instance.get(Calendar.YEAR);
+        int dobDayOfYear = instance.get(Calendar.DAY_OF_YEAR);
+        if (!BirthdayQuery.isLeapYear(currentYear) && dobDayOfYear >= BirthdayQuery.LEAP_DAY_ORD) {
+            dobDayOfYear += 1;
+        }
+        document.addField(getDobQueryField(), dobDayOfYear);
+        document.addField(dobField + ".year", currentYear);
+
+        return document;
     }
 }

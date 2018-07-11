@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class SearchProviderImpl implements SearchProvider {
 
-    private SolrClient solrClient;
+    private SearchEngineFactory searchEngineFactory;
     private BirthdaySearchComponent birthdaySearchComponent;
     private String collectionName = "test";
 
@@ -35,10 +35,11 @@ public class SearchProviderImpl implements SearchProvider {
         final String functionQuery = birthdaySearchComponent.doBirthdaySearch(query);
         solrParams.add(CommonParams.FL, "*,days_to_birthday:" + functionQuery);
         solrParams.add(CommonParams.SORT, functionQuery + " " +
-                SolrQuery.ORDER.asc + ", " + birthdaySearchComponent.getDobField() + " " + SolrQuery.ORDER.asc);
+                SolrQuery.ORDER.asc + ", " + birthdaySearchComponent.getDobQueryField() + " " + SolrQuery.ORDER.asc);
         solrParams.add(CommonParams.ROWS, String.valueOf(query.getRows()));
 
         try {
+            final SolrClient solrClient = searchEngineFactory.getSolrClientInstance();
             final QueryResponse queryResponse = solrClient.query(collectionName, solrParams, SolrRequest.METHOD.POST);
             final SolrDocumentList results = queryResponse.getResults();
 
@@ -48,12 +49,8 @@ public class SearchProviderImpl implements SearchProvider {
         }
     }
 
-    public void setSolrClient(SearchEngineFactory searchEngineFactory) {
-        this.solrClient = searchEngineFactory.createSolrClient();
-    }
-
-    public SolrClient getSolrClient() {
-        return solrClient;
+    public void setSearchEngineFactory(SearchEngineFactory searchEngineFactory) {
+        this.searchEngineFactory = searchEngineFactory;
     }
 
     public void setBirthdaySearchComponent(BirthdaySearchComponent birthdaySearchComponent) {
@@ -64,7 +61,4 @@ public class SearchProviderImpl implements SearchProvider {
         this.collectionName = collectionName;
     }
 
-    public void close() throws IOException {
-        solrClient.close();
-    }
 }
